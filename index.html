@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown博客</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .blog-content {
+            font-size: 1.1rem;
+        }
+        
+        .blog-content h1 {
+            color: #2c3e50;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eaeaea;
+        }
+        
+        .blog-content h2 {
+            color: #34495e;
+            margin-top: 25px;
+            margin-bottom: 12px;
+        }
+        
+        .blog-content p {
+            margin-bottom: 15px;
+        }
+        
+        .blog-content ul, .blog-content ol {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .blog-content li {
+            margin-bottom: 8px;
+        }
+        
+        .blog-content code {
+            background-color: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+        }
+        
+        .blog-content pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 16px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        
+        .blog-content pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+        }
+        
+        .blog-content blockquote {
+            border-left: 4px solid #4b6cb7;
+            padding-left: 20px;
+            margin: 25px 0;
+            color: #555;
+            font-style: italic;
+        }
+        
+        .blog-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .blog-content table, .blog-content th, .blog-content td {
+            border: 1px solid #ddd;
+        }
+        
+        .blog-content th, .blog-content td {
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .blog-content th {
+            background-color: #f2f2f2;
+        }
+        
+        .blog-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 20px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .error {
+            color: #e74c3c;
+            padding: 20px;
+            text-align: center;
+            background-color: #fdf0f0;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            background-color: #f8f9fa;
+            border-top: 1px solid #eaeaea;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 0;
+            }
+            
+            header {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>我的技术博客</h1>
+            <p class="subtitle">Markdown驱动的博客系统</p>
+        </header>
+        
+        <div class="content">
+            <div id="blog-content" class="blog-content">
+                <div class="loading">正在加载博客内容...</div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 Markdown博客系统 | 页面内容由blog.md提供</p>
+        </footer>
+    </div>
+
+    <!-- 引入marked.js库 -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        // 配置marked选项
+        marked.setOptions({
+            highlight: function(code, lang) {
+                // 在实际使用中，您可以在这里添加代码高亮功能
+                // 例如使用Prism.js或Highlight.js
+                return code;
+            }
+        });
+
+        // 加载并渲染Markdown内容
+        async function loadBlogContent() {
+            try {
+                const response = await fetch('blog.md');
+                
+                if (!response.ok) {
+                    throw new Error('无法加载博客内容，请确保blog.md文件存在');
+                }
+                
+                const markdown = await response.text();
+                
+                // 渲染Markdown为HTML
+                document.getElementById('blog-content').innerHTML = marked.parse(markdown);
+                
+            } catch (error) {
+                document.getElementById('blog-content').innerHTML = 
+                    '<div class="error">加载博客内容时出错: ' + error.message + '</div>';
+            }
+        }
+
+        // 页面加载完成后执行
+        window.onload = loadBlogContent;
+    </script>
+</body>
+</html>

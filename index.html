@@ -9,6 +9,7 @@
         :root {
             --primary-color: #2ea44f;
             --secondary-color: #0366d6;
+            --accent-color: #6f42c1;
             --bg-color: #f6f8fa;
             --dark-bg: #0d1117;
             --border-color: #e1e4e8;
@@ -35,7 +36,7 @@
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             background-color: var(--file-bg);
             border-radius: 12px;
@@ -137,6 +138,30 @@
             color: #586069;
         }
         
+        .view-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+        }
+        
+        .view-option {
+            padding: 8px 16px;
+            background-color: var(--file-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .view-option.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
         .file-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -150,6 +175,8 @@
             padding: 16px;
             transition: var(--transition);
             cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
         
         .file-item:hover {
@@ -158,10 +185,25 @@
             border-color: var(--primary-color);
         }
         
-        .file-icon {
-            font-size: 24px;
+        .file-thumbnail {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 6px;
             margin-bottom: 12px;
-            color: var(--secondary-color);
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: #ccc;
+        }
+        
+        .file-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
         }
         
         .file-name {
@@ -174,6 +216,38 @@
         .file-size {
             color: #586069;
             font-size: 14px;
+        }
+        
+        .file-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .file-item:hover .file-actions {
+            opacity: 1;
+        }
+        
+        .file-action {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .file-action:hover {
+            background-color: var(--primary-color);
+            color: white;
         }
         
         .file-content {
@@ -275,13 +349,81 @@
             border-top: 1px solid var(--border-color);
         }
         
+        /* 文件列表视图 */
+        .file-list-view {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .file-list-view th,
+        .file-list-view td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .file-list-view th {
+            background-color: var(--bg-color);
+            font-weight: 600;
+        }
+        
+        .file-list-view tr:hover {
+            background-color: var(--bg-color);
+        }
+        
+        .file-list-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .file-list-thumbnail {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        
+        .file-list-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .file-list-action {
+            padding: 6px 12px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 14px;
+        }
+        
+        .file-list-action:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
         @media (max-width: 768px) {
             .file-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             }
             
             .input-group {
                 flex-direction: column;
+            }
+            
+            .file-list-view {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .file-thumbnail {
+                height: 100px;
             }
         }
     </style>
@@ -290,21 +432,21 @@
     <div class="container">
         <header>
             <h1><i class="fab fa-github"></i> GitHub仓库文件浏览器</h1>
-            <p class="subtitle">直接在GitHub Pages上浏览仓库文件，支持图片预览</p>
+            <p class="subtitle">浏览、预览和下载GitHub仓库中的所有文件</p>
         </header>
         
         <div class="instructions">
-            <h3>tips</h3>
+            <h3>使用说明</h3>
             <ol>
                 <li>输入GitHub仓库URL（格式：https://github.com/用户名/仓库名）</li>
-                <li>-aydin0118-whereyy</li>
-                <li>浏览文件和文件夹，点击图片可直接预览</li>
-                <li>点击文件查看内容，点击文件夹进入子目录</li>
+                <li>-aydin0118-whereyy-</li>
+                <li>浏览文件和文件夹，图片直接显示缩略图，无需点击预览</li>
+                <li>下载请访问原网站，因安全问题此处无法下载</li>
             </ol>
         </div>
         
         <div class="input-group">
-            <input type="text" id="repo-input" placeholder="输入GitHub仓库地址，例如: https://github.com/username/repository">
+            <input type="text" id="repo-input" placeholder="输入GitHub仓库地址，例如: https://github.com/username/repository" value="https://github.com/Aydin0118/">
             <button id="load-btn"><i class="fas fa-folder-open"></i> 加载仓库</button>
         </div>
         
@@ -316,8 +458,17 @@
         </div>
         
         <footer>
-            <p>GitHub仓库文件浏览器 &copy; 2025 from Aydin</p>
+            <p>GitHub仓库文件浏览器 &copy; 2025 From Aydin</p>
         </footer>
+    </div>
+
+    <!-- 图片预览模态框 -->
+    <div id="image-modal" class="modal">
+        <button class="modal-close">&times;</button>
+        <button class="modal-nav modal-prev"><i class="fas fa-chevron-left"></i></button>
+        <button class="modal-nav modal-next"><i class="fas fa-chevron-right"></i></button>
+        <img class="modal-content" id="modal-image">
+        <div class="modal-caption" id="modal-caption"></div>
     </div>
 
     <script>
@@ -325,9 +476,23 @@
             const loadBtn = document.getElementById('load-btn');
             const repoInput = document.getElementById('repo-input');
             const contentArea = document.getElementById('content-area');
+            const imageModal = document.getElementById('image-modal');
+            const modalImage = document.getElementById('modal-image');
+            const modalCaption = document.getElementById('modal-caption');
+            const modalClose = document.querySelector('.modal-close');
+            const modalPrev = document.querySelector('.modal-prev');
+            const modalNext = document.querySelector('.modal-next');
             
-            // 添加示例仓库URL
-            repoInput.value = 'https://github.com/aydin0118/';
+            let currentImages = [];
+            let currentImageIndex = 0;
+            let currentView = 'grid';
+            let currentPath = '';
+            let currentUsername = '';
+            let currentRepo = '';
+            
+            setTimeout(() => {
+                loadRepoContents('tensorflow', 'tensorflow', '');
+            }, 1000);
             
             loadBtn.addEventListener('click', function() {
                 const repoUrl = repoInput.value.trim();
@@ -336,7 +501,6 @@
                     return;
                 }
                 
-                // 从URL中提取用户名和仓库名
                 const match = repoUrl.match(/github\.com\/([^\/]+)\/([^\/]+)/);
                 if (!match) {
                     showError('无效的GitHub仓库URL');
@@ -345,13 +509,15 @@
                 
                 const username = match[1];
                 const repo = match[2].replace(/\.git$/, '');
-                
-                // 加载仓库根目录
                 loadRepoContents(username, repo, '');
             });
             
             function loadRepoContents(username, repo, path) {
                 contentArea.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>加载中...</p></div>';
+                
+                currentUsername = username;
+                currentRepo = repo;
+                currentPath = path;
                 
                 const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/${path}`;
                 
@@ -364,10 +530,8 @@
                     })
                     .then(data => {
                         if (Array.isArray(data)) {
-                            // 显示文件列表
                             displayFileList(data, username, repo, path);
                         } else if (data.type === 'file') {
-                            // 显示文件内容
                             displayFileContent(data, username, repo, path);
                         }
                     })
@@ -377,9 +541,17 @@
             }
             
             function displayFileList(files, username, repo, path) {
+                const directories = files.filter(item => item.type === 'dir');
+                const fileItems = files.filter(item => item.type === 'file');
+                const imageFiles = fileItems.filter(item => isImageFile(item.name));
+                currentImages = imageFiles.map((image, index) => ({
+                    ...image,
+                    index: index,
+                    downloadUrl: `https://raw.githubusercontent.com/${username}/${repo}/main/${image.path}`
+                }));
+                
                 let html = '';
                 
-                // 面包屑导航
                 if (path) {
                     const pathParts = path.split('/').filter(Boolean);
                     html += '<div class="breadcrumb">';
@@ -394,60 +566,169 @@
                             html += `<span class="separator">/</span>`;
                         }
                     }
-                    
                     html += '</div>';
                 } else {
                     html += `<div class="breadcrumb"><a href="javascript:void(0)" data-path=""><i class="fas fa-home"></i> ${username}/${repo}</a></div>`;
                 }
                 
-                // 文件网格
-                html += '<div class="file-grid">';
+                html += `
+                    <div class="view-options">
+                        <div class="view-option ${currentView === 'grid' ? 'active' : ''}" data-view="grid"><i class="fas fa-th"></i> 网格视图</div>
+                        <div class="view-option ${currentView === 'list' ? 'active' : ''}" data-view="list"><i class="fas fa-list"></i> 列表视图</div>
+                    </div>
+                `;
                 
-                // 如果有父目录且不是根目录，添加返回上一级选项
-                if (path) {
-                    const parentPath = path.split('/').slice(0, -1).join('/');
+                if (currentView === 'grid') {
+                    html += '<div class="file-grid">';
+                    
+                    if (path) {
+                        const parentPath = path.split('/').slice(0, -1).join('/');
+                        html += `
+                            <div class="file-item" data-path="${parentPath}" data-type="dir">
+                                <div class="file-thumbnail"><i class="fas fa-level-up-alt"></i></div>
+                                <div class="file-name">返回上级目录</div>
+                            </div>
+                        `;
+                    }
+                    
+                    directories.forEach(item => {
+                        html += `
+                            <div class="file-item" data-path="${item.path}" data-type="${item.type}">
+                                <div class="file-thumbnail"><i class="fas fa-folder" style="color: #ffd33d;"></i></div>
+                                <div class="file-name">${item.name}</div>
+                                <div class="file-size">文件夹</div>
+                            </div>
+                        `;
+                    });
+                    
+                    fileItems.forEach(item => {
+                        const isImage = isImageFile(item.name);
+                        const downloadUrl = `https://raw.githubusercontent.com/${username}/${repo}/main/${item.path}`;
+                        const thumbnailHtml = isImage ? 
+                            `<img src="${downloadUrl}" alt="${item.name}" loading="lazy">` : 
+                            `<i class="fas fa-file" style="color: #79b8ff;"></i>`;
+                        
+                        html += `
+                            <div class="file-item" data-path="${item.path}" data-type="${item.type}" data-url="${item.html_url}">
+                                <div class="file-thumbnail">${thumbnailHtml}</div>
+                                <div class="file-name">${item.name}</div>
+                                <div class="file-size">${formatFileSize(item.size)}</div>
+                                <div class="file-actions">
+                                    <div class="file-action" title="下载" onclick="event.stopPropagation(); downloadFile('${item.name}', '${downloadUrl}')">
+                                        <i class="fas fa-download"></i>
+                                    </div>
+                                    ${isImage ? `
+                                    <div class="file-action" title="预览大图" onclick="event.stopPropagation(); previewImageFromPath('${item.path}')">
+                                        <i class="fas fa-expand"></i>
+                                    </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div>';
+                } else {
                     html += `
-                        <div class="file-item" data-path="${parentPath}" data-type="dir">
-                            <div class="file-icon"><i class="fas fa-level-up-alt"></i></div>
-                            <div class="file-name">返回上级目录</div>
-                        </div>
+                        <table class="file-list-view">
+                            <thead>
+                                <tr>
+                                    <th>预览</th>
+                                    <th>名称</th>
+                                    <th>大小</th>
+                                    <th>类型</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    
+                    if (path) {
+                        const parentPath = path.split('/').slice(0, -1).join('/');
+                        html += `
+                            <tr class="file-item" data-path="${parentPath}" data-type="dir">
+                                <td><div class="file-list-thumbnail"><i class="fas fa-level-up-alt"></i></div></td>
+                                <td>
+                                    <div class="file-list-name">
+                                        <span>返回上级目录</span>
+                                    </div>
+                                </td>
+                                <td>-</td>
+                                <td>文件夹</td>
+                                <td></td>
+                            </tr>
+                        `;
+                    }
+                    
+                    directories.forEach(item => {
+                        html += `
+                            <tr class="file-item" data-path="${item.path}" data-type="${item.type}">
+                                <td><div class="file-list-thumbnail"><i class="fas fa-folder" style="color: #ffd33d;"></i></div></td>
+                                <td>
+                                    <div class="file-list-name">
+                                        <span>${item.name}</span>
+                                    </div>
+                                </td>
+                                <td>-</td>
+                                <td>文件夹</td>
+                                <td></td>
+                            </tr>
+                        `;
+                    });
+                    
+                    fileItems.forEach(item => {
+                        const isImage = isImageFile(item.name);
+                        const fileType = isImage ? '图片' : getFileType(item.name);
+                        const downloadUrl = `https://raw.githubusercontent.com/${username}/${repo}/main/${item.path}`;
+                        const thumbnailHtml = isImage ? 
+                            `<img src="${downloadUrl}" alt="${item.name}" class="file-list-thumbnail" loading="lazy">` : 
+                            `<div class="file-list-thumbnail"><i class="fas fa-file" style="color: #79b8ff;"></i></div>`;
+                        
+                        html += `
+                            <tr class="file-item" data-path="${item.path}" data-type="${item.type}" data-url="${item.html_url}">
+                                <td>${thumbnailHtml}</td>
+                                <td>
+                                    <div class="file-list-name">
+                                        <span>${item.name}</span>
+                                    </div>
+                                </td>
+                                <td>${formatFileSize(item.size)}</td>
+                                <td>${fileType}</td>
+                                <td>
+                                    <div class="file-list-actions">
+                                        <div class="file-list-action" onclick="event.stopPropagation(); downloadFile('${item.name}', '${downloadUrl}')">
+                                            <i class="fas fa-download"></i> 下载
+                                        </div>
+                                        ${isImage ? `
+                                        <div class="file-list-action" onclick="event.stopPropagation(); previewImageFromPath('${item.path}')">
+                                            <i class="fas fa-expand"></i> 预览
+                                        </div>
+                                        ` : ''}
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                    
+                    html += `
+                            </tbody>
+                        </table>
                     `;
                 }
                 
-                // 添加目录和文件
-                files.forEach(item => {
-                    const isDir = item.type === 'dir';
-                    const isImage = isImageFile(item.name);
-                    const icon = isDir ? 'fa-folder' : (isImage ? 'fa-file-image' : 'fa-file');
-                    const iconColor = isDir ? '#ffd33d' : (isImage ? '#c652f9' : '#79b8ff');
-                    
-                    html += `
-                        <div class="file-item" data-path="${item.path}" data-type="${item.type}" data-url="${item.html_url}">
-                            <div class="file-icon"><i class="fas ${icon}" style="color: ${iconColor}"></i></div>
-                            <div class="file-name">${item.name}</div>
-                            ${!isDir ? `<div class="file-size">${formatFileSize(item.size)}</div>` : ''}
-                        </div>
-                    `;
-                });
-                
-                html += '</div>';
                 contentArea.innerHTML = html;
                 
-                // 添加点击事件
                 contentArea.querySelectorAll('.file-item').forEach(item => {
                     item.addEventListener('click', function() {
                         const itemPath = this.getAttribute('data-path');
                         const itemType = this.getAttribute('data-type');
                         
-                        if (itemType === 'dir' || !itemType) {
+                        if (itemType === 'dir') {
                             loadRepoContents(username, repo, itemPath);
                         } else {
-                            // 检查是否为图片
                             if (isImageFile(itemPath)) {
-                                // 对于图片，直接显示预览
-                                displayImagePreview(itemPath, username, repo);
+                                previewImageFromPath(itemPath);
                             } else {
-                                // 对于其他文件，获取内容
                                 fetch(`https://api.github.com/repos/${username}/${repo}/contents/${itemPath}`)
                                     .then(response => response.json())
                                     .then(fileData => {
@@ -460,13 +741,23 @@
                         }
                     });
                 });
+                
+                contentArea.querySelectorAll('.view-option').forEach(option => {
+                    option.addEventListener('click', function() {
+                        currentView = this.getAttribute('data-view');
+                        displayFileList(files, username, repo, path);
+                    });
+                });
+                
+                contentArea.querySelectorAll('.breadcrumb a[data-path]').forEach(link => {
+                    link.addEventListener('click', function() {
+                        loadRepoContents(username, repo, this.getAttribute('data-path'));
+                    });
+                });
             }
             
             function displayFileContent(fileData, username, repo, path) {
-                // 解码Base64内容
                 const content = atob(fileData.content.replace(/\s/g, ''));
-                
-                // 面包屑导航
                 const pathParts = path.split('/').filter(Boolean);
                 let breadcrumbHtml = '<div class="breadcrumb">';
                 breadcrumbHtml += `<a href="javascript:void(0)" data-path=""><i class="fas fa-home"></i> ${username}/${repo}</a>`;
@@ -478,29 +769,42 @@
                     breadcrumbHtml += `<a href="javascript:void(0)" data-path="${currentPath}">${pathParts[i]}</a>`;
                     breadcrumbHtml += `<span class="separator">/</span>`;
                 }
-                
                 breadcrumbHtml += `${pathParts[pathParts.length - 1]}</div>`;
                 
-                // 返回按钮
                 const parentPath = path.split('/').slice(0, -1).join('/');
                 const backButton = `<a href="javascript:void(0)" class="back-button" data-path="${parentPath}"><i class="fas fa-arrow-left"></i> 返回</a>`;
+                const downloadButton = `<button onclick="downloadFile('${pathParts[pathParts.length - 1]}', 'https://raw.githubusercontent.com/${username}/${repo}/main/${path}')"><i class="fas fa-download"></i> 下载文件</button>`;
                 
-                // 文件内容
-                const fileContent = `
-                    <div class="file-content">
-                        <h3>${pathParts[pathParts.length - 1]}</h3>
-                        <div class="code-content">${escapeHtml(content)}</div>
-                    </div>
-                `;
+                let fileContent = '';
+                if (isImageFile(path)) {
+                    const imageUrl = `https://raw.githubusercontent.com/${username}/${repo}/main/${path}`;
+                    fileContent = `
+                        <div class="image-preview">
+                            <img src="${imageUrl}" alt="${path}">
+                        </div>
+                    `;
+                } else if (isTextFile(path)) {
+                    fileContent = `
+                        <div class="file-content">
+                            <h3>${pathParts[pathParts.length - 1]}</h3>
+                            <div class="code-content">${escapeHtml(content)}</div>
+                        </div>
+                    `;
+                } else {
+                    fileContent = `
+                        <div class="file-content">
+                            <h3>${pathParts[pathParts.length - 1]}</h3>
+                            <p>这是一个二进制文件，无法直接预览。您可以下载该文件查看。</p>
+                        </div>
+                    `;
+                }
                 
-                contentArea.innerHTML = backButton + breadcrumbHtml + fileContent;
+                contentArea.innerHTML = backButton + breadcrumbHtml + downloadButton + fileContent;
                 
-                // 添加返回按钮事件
                 contentArea.querySelector('.back-button').addEventListener('click', function() {
                     loadRepoContents(username, repo, this.getAttribute('data-path'));
                 });
                 
-                // 添加面包屑导航事件
                 contentArea.querySelectorAll('.breadcrumb a[data-path]').forEach(link => {
                     link.addEventListener('click', function() {
                         loadRepoContents(username, repo, this.getAttribute('data-path'));
@@ -508,53 +812,71 @@
                 });
             }
             
-            function displayImagePreview(imagePath, username, repo) {
-                // 面包屑导航
-                const pathParts = imagePath.split('/').filter(Boolean);
-                let breadcrumbHtml = '<div class="breadcrumb">';
-                breadcrumbHtml += `<a href="javascript:void(0)" data-path=""><i class="fas fa-home"></i> ${username}/${repo}</a>`;
-                breadcrumbHtml += `<span class="separator">/</span>`;
-                
-                let currentPath = '';
-                for (let i = 0; i < pathParts.length - 1; i++) {
-                    currentPath += pathParts[i] + '/';
-                    breadcrumbHtml += `<a href="javascript:void(0)" data-path="${currentPath}">${pathParts[i]}</a>`;
-                    breadcrumbHtml += `<span class="separator">/</span>`;
+            function previewImageFromPath(imagePath) {
+                const imageIndex = currentImages.findIndex(img => img.path === imagePath);
+                if (imageIndex !== -1) {
+                    previewImage(imageIndex);
+                } else {
+                    const imageUrl = `https://raw.githubusercontent.com/${currentUsername}/${currentRepo}/main/${imagePath}`;
+                    modalImage.src = imageUrl;
+                    modalCaption.textContent = imagePath;
+                    imageModal.style.display = 'block';
+                    document.body.style.overflow = 'hidden';
                 }
-                
-                breadcrumbHtml += `${pathParts[pathParts.length - 1]}</div>`;
-                
-                // 返回按钮
-                const parentPath = imagePath.split('/').slice(0, -1).join('/');
-                const backButton = `<a href="javascript:void(0)" class="back-button" data-path="${parentPath}"><i class="fas fa-arrow-left"></i> 返回</a>`;
-                
-                // 图片预览
-                const imageUrl = `https://raw.githubusercontent.com/${username}/${repo}/main/${imagePath}`;
-                const imagePreview = `
-                    <div class="image-preview">
-                        <h3>${pathParts[pathParts.length - 1]}</h3>
-                        <img src="${imageUrl}" alt="${imagePath}">
-                        <p><a href="${imageUrl}" target="_blank">查看原图</a></p>
-                    </div>
-                `;
-                
-                contentArea.innerHTML = backButton + breadcrumbHtml + imagePreview;
-                
-                // 添加返回按钮事件
-                contentArea.querySelector('.back-button').addEventListener('click', function() {
-                    loadRepoContents(username, repo, this.getAttribute('data-path'));
-                });
-                
-                // 添加面包屑导航事件
-                contentArea.querySelectorAll('.breadcrumb a[data-path]').forEach(link => {
-                    link.addEventListener('click', function() {
-                        loadRepoContents(username, repo, this.getAttribute('data-path'));
-                    });
-                });
+            }
+            
+            function previewImage(index) {
+                currentImageIndex = index;
+                const image = currentImages[index];
+                modalImage.src = image.downloadUrl;
+                modalCaption.textContent = `${image.name} (${formatFileSize(image.size)})`;
+                imageModal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closeModal() {
+                imageModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+            
+            function navigateImage(direction) {
+                currentImageIndex += direction;
+                if (currentImageIndex < 0) currentImageIndex = currentImages.length - 1;
+                if (currentImageIndex >= currentImages.length) currentImageIndex = 0;
+                const image = currentImages[currentImageIndex];
+                modalImage.src = image.downloadUrl;
+                modalCaption.textContent = `${image.name} (${formatFileSize(image.size)})`;
+            }
+            
+            function downloadFile(filename, url) {
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
             }
             
             function isImageFile(filename) {
-                return /\.(jpg|jpeg|png|gif|bmp|svg|webp)$/i.test(filename);
+                return /\.(jpg|jpeg|png|gif|bmp|svg|webp|ico)$/i.test(filename);
+            }
+            
+            function isTextFile(filename) {
+                return /\.(txt|md|html|css|js|json|xml|yml|yaml|py|java|c|cpp|cs|php|rb|go|rs|ts|sh|bat|cmd|ps1)$/i.test(filename);
+            }
+            
+            function getFileType(filename) {
+                if (isImageFile(filename)) return '图片';
+                if (isTextFile(filename)) return '文本';
+                if (/\.(zip|rar|7z|tar|gz)$/i.test(filename)) return '压缩文件';
+                if (/\.(pdf)$/i.test(filename)) return 'PDF文档';
+                if (/\.(doc|docx)$/i.test(filename)) return 'Word文档';
+                if (/\.(xls|xlsx)$/i.test(filename)) return 'Excel文档';
+                if (/\.(ppt|pptx)$/i.test(filename)) return 'PowerPoint文档';
+                if (/\.(mp4|avi|mov|wmv|flv|mkv)$/i.test(filename)) return '视频';
+                if (/\.(mp3|wav|flac|aac)$/i.test(filename)) return '音频';
+                return '文件';
             }
             
             function showError(message) {
@@ -562,7 +884,7 @@
             }
             
             function formatFileSize(bytes) {
-                if (bytes === 0) return '0 B';
+                if (!bytes || bytes === 0) return '0 B';
                 const k = 1024;
                 const sizes = ['B', 'KB', 'MB', 'GB'];
                 const i = Math.floor(Math.log(bytes) / Math.log(k));
@@ -577,6 +899,25 @@
                     .replace(/"/g, "&quot;")
                     .replace(/'/g, "&#039;");
             }
+            
+            modalClose.addEventListener('click', closeModal);
+            modalPrev.addEventListener('click', () => navigateImage(-1));
+            modalNext.addEventListener('click', () => navigateImage(1));
+            imageModal.addEventListener('click', function(e) {
+                if (e.target === imageModal) closeModal();
+            });
+            
+            document.addEventListener('keydown', function(e) {
+                if (imageModal.style.display === 'block') {
+                    if (e.key === 'Escape') closeModal();
+                    else if (e.key === 'ArrowLeft') navigateImage(-1);
+                    else if (e.key === 'ArrowRight') navigateImage(1);
+                }
+            });
+            
+            window.previewImage = previewImage;
+            window.previewImageFromPath = previewImageFromPath;
+            window.downloadFile = downloadFile;
         });
     </script>
 </body>

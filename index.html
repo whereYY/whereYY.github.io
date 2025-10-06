@@ -3,181 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Markdown博客</title>
+    <title>GitHub仓库文件浏览器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #2ea44f;
+            --secondary-color: #0366d6;
+            --bg-color: #f6f8fa;
+            --dark-bg: #0d1117;
+            --border-color: #e1e4e8;
+            --text-color: #24292e;
+            --light-text: #fafbfc;
+            --file-bg: #ffffff;
+            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: var(--text-color);
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
             padding: 20px;
+            min-height: 100vh;
         }
         
         .container {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
-            background: white;
+            background-color: var(--file-bg);
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--card-shadow);
             overflow: hidden;
         }
         
         header {
-            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
-            color: white;
-            padding: 30px;
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: var(--light-text);
+            padding: 20px;
             text-align: center;
         }
         
         h1 {
-            font-size: 2.5rem;
+            font-size: 28px;
             margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
         }
         
         .subtitle {
-            font-size: 1.2rem;
+            font-size: 16px;
             opacity: 0.9;
-            font-weight: 300;
-        }
-        
-        .content {
-            padding: 30px;
-        }
-        
-        .blog-content {
-            font-size: 1.1rem;
-        }
-        
-        .blog-content h1 {
-            color: #2c3e50;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #eaeaea;
-        }
-        
-        .blog-content h2 {
-            color: #34495e;
-            margin-top: 25px;
-            margin-bottom: 12px;
-        }
-        
-        .blog-content p {
-            margin-bottom: 15px;
-        }
-        
-        .blog-content ul, .blog-content ol {
-            margin-left: 20px;
             margin-bottom: 20px;
         }
         
-        .blog-content li {
-            margin-bottom: 8px;
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin: 20px;
         }
         
-        .blog-content code {
-            background-color: #f8f9fa;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.95em;
+        input[type="text"] {
+            flex: 1;
+            padding: 12px 16px;
+            font-size: 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            transition: var(--transition);
         }
         
-        .blog-content pre {
-            background-color: #2d2d2d;
-            color: #f8f8f2;
+        input[type="text"]:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(46, 164, 79, 0.2);
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        button:hover {
+            background-color: #22863a;
+            transform: translateY(-2px);
+        }
+        
+        .content-area {
+            padding: 20px;
+            min-height: 500px;
+        }
+        
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
             padding: 16px;
+            background-color: var(--bg-color);
+            border-radius: 8px;
+        }
+        
+        .breadcrumb a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        
+        .breadcrumb .separator {
+            color: #586069;
+        }
+        
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 16px;
+        }
+        
+        .file-item {
+            background-color: var(--file-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .file-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--card-shadow);
+            border-color: var(--primary-color);
+        }
+        
+        .file-icon {
+            font-size: 24px;
+            margin-bottom: 12px;
+            color: var(--secondary-color);
+        }
+        
+        .file-name {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-color);
+            word-break: break-all;
+        }
+        
+        .file-size {
+            color: #586069;
+            font-size: 14px;
+        }
+        
+        .file-content {
+            background-color: var(--bg-color);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .code-content {
+            white-space: pre-wrap;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            background-color: var(--dark-bg);
+            color: var(--light-text);
+            padding: 20px;
             border-radius: 6px;
             overflow-x: auto;
-            margin: 20px 0;
+            font-size: 14px;
+            line-height: 1.5;
         }
         
-        .blog-content pre code {
-            background: none;
-            padding: 0;
-            border-radius: 0;
+        .image-preview {
+            text-align: center;
+            margin-top: 20px;
         }
         
-        .blog-content blockquote {
-            border-left: 4px solid #4b6cb7;
-            padding-left: 20px;
-            margin: 25px 0;
-            color: #555;
-            font-style: italic;
-        }
-        
-        .blog-content table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        
-        .blog-content table, .blog-content th, .blog-content td {
-            border: 1px solid #ddd;
-        }
-        
-        .blog-content th, .blog-content td {
-            padding: 12px;
-            text-align: left;
-        }
-        
-        .blog-content th {
-            background-color: #f2f2f2;
-        }
-        
-        .blog-content img {
+        .image-preview img {
             max-width: 100%;
-            height: auto;
+            max-height: 500px;
             border-radius: 8px;
-            margin: 20px 0;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding: 10px 16px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+        
+        .back-button:hover {
+            background-color: #e1e4e8;
+        }
+        
+        .error {
+            color: #cb2431;
+            padding: 16px;
+            background-color: #ffebe9;
+            border: 1px solid #ffcecb;
+            border-radius: 6px;
+            margin-bottom: 16px;
         }
         
         .loading {
             text-align: center;
             padding: 40px;
-            color: #666;
+            color: #586069;
+            font-size: 18px;
         }
         
-        .error {
-            color: #e74c3c;
+        .loading i {
+            display: block;
+            font-size: 32px;
+            margin-bottom: 16px;
+            color: var(--primary-color);
+        }
+        
+        .instructions {
+            background-color: var(--bg-color);
             padding: 20px;
-            text-align: center;
-            background-color: #fdf0f0;
             border-radius: 8px;
-            margin: 20px 0;
+            margin: 20px;
+        }
+        
+        .instructions h3 {
+            margin-bottom: 12px;
+            color: var(--secondary-color);
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
         }
         
         footer {
             text-align: center;
             padding: 20px;
-            color: #666;
-            background-color: #f8f9fa;
-            border-top: 1px solid #eaeaea;
+            color: #586069;
+            font-size: 14px;
+            border-top: 1px solid var(--border-color);
         }
         
         @media (max-width: 768px) {
-            .container {
-                border-radius: 0;
+            .file-grid {
+                grid-template-columns: 1fr;
             }
             
-            header {
-                padding: 20px;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .content {
-                padding: 20px;
+            .input-group {
+                flex-direction: column;
             }
         }
     </style>
@@ -185,55 +289,295 @@
 <body>
     <div class="container">
         <header>
-            <h1>我的技术博客</h1>
-            <p class="subtitle">Markdown驱动的博客系统</p>
+            <h1><i class="fab fa-github"></i> GitHub仓库文件浏览器</h1>
+            <p class="subtitle">直接在GitHub Pages上浏览仓库文件，支持图片预览</p>
         </header>
         
-        <div class="content">
-            <div id="blog-content" class="blog-content">
-                <div class="loading">正在加载博客内容...</div>
+        <div class="instructions">
+            <h3>tips</h3>
+            <ol>
+                <li>输入GitHub仓库URL（格式：https://github.com/用户名/仓库名）</li>
+                <li>点击"加载仓库"按钮</li>
+                <li>浏览文件和文件夹，点击图片可直接预览</li>
+                <li>点击文件查看内容，点击文件夹进入子目录</li>
+            </ol>
+        </div>
+        
+        <div class="input-group">
+            <input type="text" id="repo-input" placeholder="输入GitHub仓库地址，例如: https://github.com/username/repository">
+            <button id="load-btn"><i class="fas fa-folder-open"></i> 加载仓库</button>
+        </div>
+        
+        <div id="content-area" class="content-area">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>请输入GitHub仓库URL并点击加载按钮开始浏览文件</p>
             </div>
         </div>
         
         <footer>
-            <p>© 2023 Markdown博客系统 | 页面内容由blog.md提供</p>
+            <p>GitHub仓库文件浏览器 &copy; 2025 from Aydin</p>
         </footer>
     </div>
 
-    <!-- 引入marked.js库 -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
-        // 配置marked选项
-        marked.setOptions({
-            highlight: function(code, lang) {
-                // 在实际使用中，您可以在这里添加代码高亮功能
-                // 例如使用Prism.js或Highlight.js
-                return code;
-            }
-        });
-
-        // 加载并渲染Markdown内容
-        async function loadBlogContent() {
-            try {
-                const response = await fetch('blog.md');
-                
-                if (!response.ok) {
-                    throw new Error('无法加载博客内容，请确保blog.md文件存在');
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadBtn = document.getElementById('load-btn');
+            const repoInput = document.getElementById('repo-input');
+            const contentArea = document.getElementById('content-area');
+            
+            // 添加示例仓库URL
+            repoInput.value = 'https://github.com/aydin0118/';
+            
+            loadBtn.addEventListener('click', function() {
+                const repoUrl = repoInput.value.trim();
+                if (!repoUrl) {
+                    showError('请输入GitHub仓库URL');
+                    return;
                 }
                 
-                const markdown = await response.text();
+                // 从URL中提取用户名和仓库名
+                const match = repoUrl.match(/github\.com\/([^\/]+)\/([^\/]+)/);
+                if (!match) {
+                    showError('无效的GitHub仓库URL');
+                    return;
+                }
                 
-                // 渲染Markdown为HTML
-                document.getElementById('blog-content').innerHTML = marked.parse(markdown);
+                const username = match[1];
+                const repo = match[2].replace(/\.git$/, '');
                 
-            } catch (error) {
-                document.getElementById('blog-content').innerHTML = 
-                    '<div class="error">加载博客内容时出错: ' + error.message + '</div>';
+                // 加载仓库根目录
+                loadRepoContents(username, repo, '');
+            });
+            
+            function loadRepoContents(username, repo, path) {
+                contentArea.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>加载中...</p></div>';
+                
+                const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/${path}`;
+                
+                fetch(apiUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('无法访问仓库，可能是私有仓库或不存在');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (Array.isArray(data)) {
+                            // 显示文件列表
+                            displayFileList(data, username, repo, path);
+                        } else if (data.type === 'file') {
+                            // 显示文件内容
+                            displayFileContent(data, username, repo, path);
+                        }
+                    })
+                    .catch(error => {
+                        showError(error.message);
+                    });
             }
-        }
-
-        // 页面加载完成后执行
-        window.onload = loadBlogContent;
+            
+            function displayFileList(files, username, repo, path) {
+                let html = '';
+                
+                // 面包屑导航
+                if (path) {
+                    const pathParts = path.split('/').filter(Boolean);
+                    html += '<div class="breadcrumb">';
+                    html += `<a href="javascript:void(0)" data-path=""><i class="fas fa-home"></i> ${username}/${repo}</a>`;
+                    html += `<span class="separator">/</span>`;
+                    
+                    let currentPath = '';
+                    for (let i = 0; i < pathParts.length; i++) {
+                        currentPath += pathParts[i] + '/';
+                        html += `<a href="javascript:void(0)" data-path="${currentPath}">${pathParts[i]}</a>`;
+                        if (i < pathParts.length - 1) {
+                            html += `<span class="separator">/</span>`;
+                        }
+                    }
+                    
+                    html += '</div>';
+                } else {
+                    html += `<div class="breadcrumb"><a href="javascript:void(0)" data-path=""><i class="fas fa-home"></i> ${username}/${repo}</a></div>`;
+                }
+                
+                // 文件网格
+                html += '<div class="file-grid">';
+                
+                // 如果有父目录且不是根目录，添加返回上一级选项
+                if (path) {
+                    const parentPath = path.split('/').slice(0, -1).join('/');
+                    html += `
+                        <div class="file-item" data-path="${parentPath}" data-type="dir">
+                            <div class="file-icon"><i class="fas fa-level-up-alt"></i></div>
+                            <div class="file-name">返回上级目录</div>
+                        </div>
+                    `;
+                }
+                
+                // 添加目录和文件
+                files.forEach(item => {
+                    const isDir = item.type === 'dir';
+                    const isImage = isImageFile(item.name);
+                    const icon = isDir ? 'fa-folder' : (isImage ? 'fa-file-image' : 'fa-file');
+                    const iconColor = isDir ? '#ffd33d' : (isImage ? '#c652f9' : '#79b8ff');
+                    
+                    html += `
+                        <div class="file-item" data-path="${item.path}" data-type="${item.type}" data-url="${item.html_url}">
+                            <div class="file-icon"><i class="fas ${icon}" style="color: ${iconColor}"></i></div>
+                            <div class="file-name">${item.name}</div>
+                            ${!isDir ? `<div class="file-size">${formatFileSize(item.size)}</div>` : ''}
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                contentArea.innerHTML = html;
+                
+                // 添加点击事件
+                contentArea.querySelectorAll('.file-item').forEach(item => {
+                    item.addEventListener('click', function() {
+                        const itemPath = this.getAttribute('data-path');
+                        const itemType = this.getAttribute('data-type');
+                        
+                        if (itemType === 'dir' || !itemType) {
+                            loadRepoContents(username, repo, itemPath);
+                        } else {
+                            // 检查是否为图片
+                            if (isImageFile(itemPath)) {
+                                // 对于图片，直接显示预览
+                                displayImagePreview(itemPath, username, repo);
+                            } else {
+                                // 对于其他文件，获取内容
+                                fetch(`https://api.github.com/repos/${username}/${repo}/contents/${itemPath}`)
+                                    .then(response => response.json())
+                                    .then(fileData => {
+                                        displayFileContent(fileData, username, repo, itemPath);
+                                    })
+                                    .catch(error => {
+                                        showError('无法加载文件内容: ' + error.message);
+                                    });
+                            }
+                        }
+                    });
+                });
+            }
+            
+            function displayFileContent(fileData, username, repo, path) {
+                // 解码Base64内容
+                const content = atob(fileData.content.replace(/\s/g, ''));
+                
+                // 面包屑导航
+                const pathParts = path.split('/').filter(Boolean);
+                let breadcrumbHtml = '<div class="breadcrumb">';
+                breadcrumbHtml += `<a href="javascript:void(0)" data-path=""><i class="fas fa-home"></i> ${username}/${repo}</a>`;
+                breadcrumbHtml += `<span class="separator">/</span>`;
+                
+                let currentPath = '';
+                for (let i = 0; i < pathParts.length - 1; i++) {
+                    currentPath += pathParts[i] + '/';
+                    breadcrumbHtml += `<a href="javascript:void(0)" data-path="${currentPath}">${pathParts[i]}</a>`;
+                    breadcrumbHtml += `<span class="separator">/</span>`;
+                }
+                
+                breadcrumbHtml += `${pathParts[pathParts.length - 1]}</div>`;
+                
+                // 返回按钮
+                const parentPath = path.split('/').slice(0, -1).join('/');
+                const backButton = `<a href="javascript:void(0)" class="back-button" data-path="${parentPath}"><i class="fas fa-arrow-left"></i> 返回</a>`;
+                
+                // 文件内容
+                const fileContent = `
+                    <div class="file-content">
+                        <h3>${pathParts[pathParts.length - 1]}</h3>
+                        <div class="code-content">${escapeHtml(content)}</div>
+                    </div>
+                `;
+                
+                contentArea.innerHTML = backButton + breadcrumbHtml + fileContent;
+                
+                // 添加返回按钮事件
+                contentArea.querySelector('.back-button').addEventListener('click', function() {
+                    loadRepoContents(username, repo, this.getAttribute('data-path'));
+                });
+                
+                // 添加面包屑导航事件
+                contentArea.querySelectorAll('.breadcrumb a[data-path]').forEach(link => {
+                    link.addEventListener('click', function() {
+                        loadRepoContents(username, repo, this.getAttribute('data-path'));
+                    });
+                });
+            }
+            
+            function displayImagePreview(imagePath, username, repo) {
+                // 面包屑导航
+                const pathParts = imagePath.split('/').filter(Boolean);
+                let breadcrumbHtml = '<div class="breadcrumb">';
+                breadcrumbHtml += `<a href="javascript:void(0)" data-path=""><i class="fas fa-home"></i> ${username}/${repo}</a>`;
+                breadcrumbHtml += `<span class="separator">/</span>`;
+                
+                let currentPath = '';
+                for (let i = 0; i < pathParts.length - 1; i++) {
+                    currentPath += pathParts[i] + '/';
+                    breadcrumbHtml += `<a href="javascript:void(0)" data-path="${currentPath}">${pathParts[i]}</a>`;
+                    breadcrumbHtml += `<span class="separator">/</span>`;
+                }
+                
+                breadcrumbHtml += `${pathParts[pathParts.length - 1]}</div>`;
+                
+                // 返回按钮
+                const parentPath = imagePath.split('/').slice(0, -1).join('/');
+                const backButton = `<a href="javascript:void(0)" class="back-button" data-path="${parentPath}"><i class="fas fa-arrow-left"></i> 返回</a>`;
+                
+                // 图片预览
+                const imageUrl = `https://raw.githubusercontent.com/${username}/${repo}/main/${imagePath}`;
+                const imagePreview = `
+                    <div class="image-preview">
+                        <h3>${pathParts[pathParts.length - 1]}</h3>
+                        <img src="${imageUrl}" alt="${imagePath}">
+                        <p><a href="${imageUrl}" target="_blank">查看原图</a></p>
+                    </div>
+                `;
+                
+                contentArea.innerHTML = backButton + breadcrumbHtml + imagePreview;
+                
+                // 添加返回按钮事件
+                contentArea.querySelector('.back-button').addEventListener('click', function() {
+                    loadRepoContents(username, repo, this.getAttribute('data-path'));
+                });
+                
+                // 添加面包屑导航事件
+                contentArea.querySelectorAll('.breadcrumb a[data-path]').forEach(link => {
+                    link.addEventListener('click', function() {
+                        loadRepoContents(username, repo, this.getAttribute('data-path'));
+                    });
+                });
+            }
+            
+            function isImageFile(filename) {
+                return /\.(jpg|jpeg|png|gif|bmp|svg|webp)$/i.test(filename);
+            }
+            
+            function showError(message) {
+                contentArea.innerHTML = `<div class="error"><i class="fas fa-exclamation-circle"></i> 错误: ${message}</div>`;
+            }
+            
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 B';
+                const k = 1024;
+                const sizes = ['B', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+            
+            function escapeHtml(unsafe) {
+                return unsafe
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+        });
     </script>
 </body>
 </html>

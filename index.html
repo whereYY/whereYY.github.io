@@ -3,1107 +3,934 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub仓库文件浏览器</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Happy Birthday, Aydin!</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root {
-            --primary-color: #2ea44f;
-            --secondary-color: #0366d6;
-            --accent-color: #6f42c1;
-            --bg-color: #f6f8fa;
-            --dark-bg: #0d1117;
-            --border-color: #e1e4e8;
-            --text-color: #24292e;
-            --light-text: #fafbfc;
-            --file-bg: #ffffff;
-            --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
-        }
-        
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
         }
-        
+
+        :root {
+            --bg-color: #1e1e1e;
+            --text-color: #d4d4d4;
+            --accent-color: #4CAF50;
+            --secondary-color: #007acc;
+            --error-color: #f44336;
+            --comment-color: #6a9955;
+            --keyword-color: #569cd6;
+            --string-color: #ce9178;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-            line-height: 1.6;
+            background-color: var(--bg-color);
             color: var(--text-color);
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            padding: 20px;
+            overflow-x: hidden;
             min-height: 100vh;
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background-color: var(--file-bg);
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
-            overflow: hidden;
-        }
-        
-        header {
-            background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: var(--light-text);
-            padding: 20px;
-            text-align: center;
-        }
-        
-        h1 {
-            font-size: 28px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
-        
-        .subtitle {
-            font-size: 16px;
-            opacity: 0.9;
-            margin-bottom: 20px;
-        }
-        
-        .input-group {
-            display: flex;
-            gap: 10px;
-            margin: 20px;
-        }
-        
-        input[type="text"] {
-            flex: 1;
-            padding: 12px 16px;
-            font-size: 16px;
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            transition: var(--transition);
-        }
-        
-        input[type="text"]:focus {
-            border-color: var(--primary-color);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(46, 164, 79, 0.2);
-        }
-        
-        button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            font-size: 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        button:hover {
-            background-color: #22863a;
-            transform: translateY(-2px);
-        }
-        
-        .content-area {
-            padding: 20px;
-            min-height: 500px;
-        }
-        
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 20px;
-            padding: 16px;
-            background-color: var(--bg-color);
-            border-radius: 8px;
-        }
-        
-        .breadcrumb a {
-            color: var(--secondary-color);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        .breadcrumb a:hover {
-            text-decoration: underline;
-        }
-        
-        .breadcrumb .separator {
-            color: #586069;
-        }
-        
-        .view-options {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            padding: 10px;
-            background-color: var(--bg-color);
-            border-radius: 8px;
-        }
-        
-        .view-option {
-            padding: 8px 16px;
-            background-color: var(--file-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .view-option.active {
-            background-color: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-        
-        .file-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 16px;
-        }
-        
-        .file-item {
-            background-color: var(--file-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 16px;
-            transition: var(--transition);
-            cursor: pointer;
             position: relative;
-            overflow: hidden;
         }
-        
-        .file-item:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--card-shadow);
-            border-color: var(--primary-color);
-        }
-        
-        .file-icon {
-            font-size: 24px;
-            margin-bottom: 12px;
-            color: var(--secondary-color);
-        }
-        
-        .file-name {
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--text-color);
-            word-break: break-all;
-        }
-        
-        .file-size {
-            color: #586069;
-            font-size: 14px;
-        }
-        
-        .file-actions {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            display: flex;
-            gap: 8px;
-            opacity: 0;
-            transition: var(--transition);
-        }
-        
-        .file-item:hover .file-actions {
-            opacity: 1;
-        }
-        
-        .file-action {
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .file-action:hover {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        
-        .file-content {
-            background-color: var(--bg-color);
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-        
-        .code-content {
-            white-space: pre-wrap;
-            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-            background-color: var(--dark-bg);
-            color: var(--light-text);
-            padding: 20px;
-            border-radius: 6px;
-            overflow-x: auto;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-        
-        .image-preview {
-            text-align: center;
-            margin-top: 20px;
-        }
-        
-        .image-preview img {
-            max-width: 100%;
-            max-height: 500px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-        
-        .back-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 20px;
-            padding: 10px 16px;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            text-decoration: none;
-            border-radius: 6px;
-            transition: var(--transition);
-        }
-        
-        .back-button:hover {
-            background-color: #e1e4e8;
-        }
-        
-        .error {
-            color: #cb2431;
-            padding: 16px;
-            background-color: #ffebe9;
-            border: 1px solid #ffcecb;
-            border-radius: 6px;
-            margin-bottom: 16px;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #586069;
-            font-size: 18px;
-        }
-        
-        .loading i {
-            display: block;
-            font-size: 32px;
-            margin-bottom: 16px;
-            color: var(--primary-color);
-        }
-        
-        .instructions {
-            background-color: var(--bg-color);
-            padding: 20px;
-            border-radius: 8px;
-            margin: 20px;
-        }
-        
-        .instructions h3 {
-            margin-bottom: 12px;
-            color: var(--secondary-color);
-        }
-        
-        .instructions ol {
-            padding-left: 20px;
-        }
-        
-        .instructions li {
-            margin-bottom: 8px;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 20px;
-            color: #586069;
-            font-size: 14px;
-            border-top: 1px solid var(--border-color);
-        }
-        
-        /* 图片直接预览样式 */
-        .file-thumbnail {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            border-radius: 6px;
-            margin-bottom: 12px;
-            background-color: #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-        
-        .file-thumbnail img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-        
-        .file-item:hover .file-thumbnail img {
-            transform: scale(1.05);
-        }
-        
-        .file-thumbnail .file-icon {
-            font-size: 48px;
-            color: #ccc;
-            margin-bottom: 0;
-        }
-        
-        /* 大图预览模态框 - 适配手机 */
-        .modal {
-            display: none;
+
+        /* 背景动画 */
+        .bg-animation {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.95);
-            z-index: 10000;
+            z-index: -1;
+            opacity: 0.1;
             overflow: hidden;
-            padding: 0;
-            margin: 0;
-            touch-action: manipulation;
         }
-        
-        .modal-content {
+
+        .code-line {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            max-width: 95%;
-            max-height: 95%;
-            object-fit: contain;
+            white-space: nowrap;
+            font-size: 14px;
+            animation: float linear infinite;
+            opacity: 0;
         }
-        
-        .modal-close {
+
+        @keyframes float {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 页眉 */
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 1px solid #333;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            color: var(--accent-color);
+            text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--comment-color);
+            margin-top: 10px;
+        }
+
+        /* 内容区域 */
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 代码编辑器样式 */
+        .code-editor {
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+            position: relative;
+        }
+
+        .editor-header {
+            background-color: #252526;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .editor-buttons {
+            display: flex;
+            gap: 8px;
+            margin-right: 15px;
+        }
+
+        .editor-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .close { background-color: #ff5f56; }
+        .minimize { background-color: #ffbd2e; }
+        .maximize { background-color: #27c93f; }
+
+        .editor-title {
+            color: #9cdcfe;
+            font-size: 0.9rem;
+        }
+
+        .editor-content {
+            padding: 15px;
+            font-size: 1rem;
+            line-height: 1.6;
+            min-height: 300px;
+            overflow: auto;
+            white-space: pre;
+        }
+
+        .keyword { color: var(--keyword-color); }
+        .function { color: #dcdcaa; }
+        .string { color: var(--string-color); }
+        .comment { color: var(--comment-color); }
+        .number { color: #b5cea8; }
+        .variable { color: #9cdcfe; }
+
+        /* 幻灯片区域 */
+        .slideshow {
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+            position: relative;
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slideshow-header {
+            background-color: #252526;
+            padding: 10px 15px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .slide-indicator {
+            display: flex;
+            gap: 5px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #555;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background-color: var(--accent-color);
+            transform: scale(1.2);
+        }
+
+        .slide-content {
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transform: translateX(100px);
+            transition: all 0.8s ease;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide h3 {
+            font-size: 1.8rem;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        .slide p {
+            margin: 10px 0;
+        }
+
+        .slide i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+        }
+
+        /* 底部区域 */
+        .footer-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .birthday-wish {
+            background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+            border-radius: 8px;
+            padding: 25px;
+            border: 1px solid #333;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .birthday-wish::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--accent-color), var(--secondary-color));
+        }
+
+        .birthday-wish h3 {
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .birthday-wish ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+
+        .birthday-wish li {
+            margin: 10px 0;
+            position: relative;
+        }
+
+        .birthday-wish li::before {
+            content: '>';
+            position: absolute;
+            left: -20px;
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+
+        .interactive {
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            padding: 25px;
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .interactive h3 {
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+
+        .btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 10px;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background-color: #3d8b40;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #0062a3;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #333;
+            border-radius: 4px;
+            margin-top: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+
+        .countdown {
+            font-size: 2rem;
+            color: var(--accent-color);
+            margin: 15px 0;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+        }
+
+        /* 彩纸效果 */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent-color);
+            top: -10px;
+            z-index: 100;
+            animation: fall linear forwards;
+            opacity: 0;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* 通知 */
+        .notification {
             position: fixed;
             top: 20px;
             right: 20px;
-            color: white;
-            font-size: 30px;
-            cursor: pointer;
-            background: rgba(0, 0, 0, 0.5);
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10001;
+            background-color: #252526;
+            border-left: 4px solid var(--accent-color);
+            padding: 15px 20px;
+            border-radius: 4px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            transform: translateX(150%);
+            transition: transform 0.5s ease;
+            z-index: 1000;
+            max-width: 300px;
         }
-        
-        .modal-caption {
-            position: fixed;
-            bottom: 20px;
-            left: 0;
-            right: 0;
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        /* 页脚 */
+        footer {
             text-align: center;
-            color: white;
-            padding: 16px;
-            background: rgba(0, 0, 0, 0.7);
-            font-size: 18px;
-            z-index: 10001;
+            padding: 30px 0;
+            color: var(--comment-color);
+            border-top: 1px solid #333;
+            margin-top: 30px;
+            font-size: 0.9rem;
         }
-        
-        .modal-nav {
+
+        .heart {
+            color: var(--error-color);
+            animation: pulse 1.5s infinite;
+            display: inline-block;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* 模态框 */
+        .modal {
             position: fixed;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            font-size: 24px;
-            cursor: pointer;
-            transition: var(--transition);
-            z-index: 10001;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-nav:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        .modal-prev {
-            left: 20px;
-        }
-        
-        .modal-next {
-            right: 20px;
-        }
-        
-        /* 文件列表视图 */
-        .file-list-view {
+            top: 0;
+            left: 0;
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        
-        .file-list-view th,
-        .file-list-view td {
-            padding: 12px 16px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        .file-list-view th {
-            background-color: var(--bg-color);
-            font-weight: 600;
-        }
-        
-        .file-list-view tr:hover {
-            background-color: var(--bg-color);
-        }
-        
-        .file-list-name {
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
             display: flex;
+            justify-content: center;
             align-items: center;
-            gap: 8px;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
         }
-        
-        .file-list-actions {
-            display: flex;
-            gap: 8px;
+
+        .modal.show {
+            opacity: 1;
+            pointer-events: all;
         }
-        
-        .file-list-action {
-            padding: 6px 12px;
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
+
+        .modal-content {
+            background-color: #1e1e1e;
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-content h2 {
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        .modal-content p {
+            margin: 15px 0;
+            line-height: 1.6;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.5rem;
             cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 14px;
+            color: var(--text-color);
+            transition: color 0.3s ease;
         }
-        
-        .file-list-action:hover {
-            background-color: var(--primary-color);
-            color: white;
+
+        .close-modal:hover {
+            color: var(--error-color);
         }
-        
-        /* 列表视图中的缩略图 */
-        .list-thumbnail {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 4px;
-            margin-right: 12px;
+
+        /* 粒子效果 */
+        .particle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0;
         }
-        
-        /* 响应式设计 */
+
+        /* 响应式调整 */
         @media (max-width: 768px) {
-            .file-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
-            
-            .input-group {
-                flex-direction: column;
-            }
-            
-            .file-list-view {
-                display: block;
-                overflow-x: auto;
-            }
-            
-            .modal-nav, .modal-close {
-                width: 40px;
-                height: 40px;
-                font-size: 20px;
-            }
-            
-            .modal-prev {
-                left: 10px;
-            }
-            
-            .modal-next {
-                right: 10px;
-            }
-            
-            .modal-close {
-                top: 10px;
-                right: 10px;
-            }
-            
-            .file-thumbnail {
-                height: 120px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .file-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .file-thumbnail {
-                height: 150px;
-            }
-            
-            .modal-caption {
-                font-size: 14px;
-                padding: 10px;
-            }
+            h1 { font-size: 2.5rem; }
+            .slide h3 { font-size: 1.5rem; }
+            .slide p { font-size: 1rem; }
+            .countdown { font-size: 1.5rem; }
         }
     </style>
 </head>
 <body>
+    <!-- 背景动画 -->
+    <div class="bg-animation" id="bgAnimation"></div>
+
+    <!-- 通知 -->
+    <div class="notification" id="notification">
+        <div id="notificationText">欢迎Aydin！系统启动中...</div>
+    </div>
+
+    <!-- 模态框 -->
+    <div class="modal" id="birthdayModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <h2>🎂 生日快乐，Aydin！</h2>
+            <p>亲爱的Aydin，恭喜你成年啦！🎉</p>
+            <p>你的代码人生现在正式进入生产环境！</p>
+            <p>愿你的生活没有bug，愿你的代码一次通过！</p>
+            <button class="btn" id="startCelebration">开始庆祝</button>
+        </div>
+    </div>
+
     <div class="container">
         <header>
-            <h1><i class="fab fa-github"></i> GitHub仓库文件浏览器</h1>
-            <p class="subtitle">支持所有文件浏览和下载</p>
+            <h1><i class="fas fa-code"></i> Happy Birthday, Aydin!</h1>
+            <div class="subtitle">致刚成年的软件工程师Aydin：愿你的代码永远优雅，生活充满惊喜</div>
         </header>
-        
-        <div class="instructions">
-            <h3>使用说明</h3>
-            <ol>
-                <li>输入GitHub仓库URL（格式：https://github.com/用户名/仓库名）</li>
-                <li>-Aydin0118-whereYY-</li>
-                <li>图片文件直接显示缩略图，无需点击即可预览</li>
-                <li>点击图片可查看大图，支持下载功能（因安全问题已失效）</li>
-            </ol>
-        </div>
-        
-        <div class="input-group">
-            <input type="text" id="repo-input" placeholder="输入GitHub仓库地址，例如: https://github.com/username/repository" value="https://github.com/Aydin0118/">
-            <button id="load-btn"><i class="fas fa-folder-open"></i> 加载仓库</button>
-        </div>
-        
-        <div id="content-area" class="content-area">
-            <div class="loading">
-                <i class="fas fa-spinner fa-spin"></i>
-                <p>请输入GitHub仓库URL并点击加载按钮开始浏览文件</p>
+
+        <div class="content">
+            <!-- 代码编辑器 -->
+            <div class="code-editor">
+                <div class="editor-header">
+                    <div class="editor-buttons">
+                        <div class="editor-button close"></div>
+                        <div class="editor-button minimize"></div>
+                        <div class="editor-button maximize"></div>
+                    </div>
+                    <div class="editor-title">aydin_birthday.js</div>
+                </div>
+                <div class="editor-content" id="codeEditor">
+                    <span class="comment">// 初始化Aydin的生日祝福系统...</span><br>
+                    <span class="keyword">const</span> <span class="variable">aydin</span> = <span class="string">"刚成年的软件工程师"</span>;<br>
+                    <span class="keyword">const</span> <span class="variable">age</span> = <span class="number">18</span>;<br>
+                    <span class="keyword">let</span> <span class="variable">bugCount</span> = <span class="number">0</span>;<br><br>
+                    
+                    <span class="keyword">function</span> <span class="function">celebrateAydinBirthday</span>() {<br>
+                    &nbsp;&nbsp;<span class="keyword">const</span> <span class="variable">joy</span> = <span class="number">100</span>;<br>
+                    &nbsp;&nbsp;<span class="keyword">const</span> <span class="variable">wisdom</span> = <span class="number">200</span>;<br>
+                    &nbsp;&nbsp;<span class="keyword">const</span> <span class="variable">codingSkills</span> = <span class="number">999</span>;<br><br>
+                    
+                    &nbsp;&nbsp;<span class="comment">// 生成Aydin的专属祝福</span><br>
+                    &nbsp;&nbsp;<span class="keyword">return</span> <span class="string">`亲爱的Aydin，生日快乐！\n`</span> +<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">`年龄: ${age} (正式版)\n`</span> +<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">`快乐值: ${joy}%\n`</span> +<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">`智慧值: ${wisdom}%\n`</span> +<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">`编程技能: ${codingSkills}%\n\n`</span> +<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"愿Aydin的生活：\n"</span> +<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"- 没有segmentation fault\n"</span> +<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"- 内存永远充足\n"</span> +<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"- 算法总是最优\n"</span> +<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"- 生活没有null指针\n"</span>;<br>
+                    }<br><br>
+                    
+                    <span class="comment">// 执行Aydin的祝福</span><br>
+                    <span class="keyword">const</span> <span class="variable">aydinBirthdayMessage</span> = <span class="function">celebrateAydinBirthday</span>();<br>
+                    <span class="function">console</span>.<span class="function">log</span>(<span class="variable">aydinBirthdayMessage</span>);
+                </div>
+            </div>
+
+            <!-- 幻灯片 -->
+            <div class="slideshow">
+                <div class="slideshow-header">
+                    <div>🎉 Aydin的庆祝程序运行中...</div>
+                    <div class="slide-indicator" id="slideIndicator">
+                        <div class="dot active"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                    </div>
+                </div>
+                <div class="slide-content" id="slideContent">
+                    <div class="slide active">
+                        <i class="fas fa-laptop-code"></i>
+                        <h3>Aydin，欢迎来到成年世界</h3>
+                        <p>你已成功编译人生18.0版本</p>
+                        <p>新功能：法律责任、完全自主权、更多bug等待修复</p>
+                    </div>
+                    <div class="slide">
+                        <i class="fas fa-coffee"></i>
+                        <h3>Aydin的成年礼</h3>
+                        <p>愿Aydin的咖啡永远热乎</p>
+                        <p>键盘永不卡顿</p>
+                        <p>Stack Overflow永远有你需要的答案</p>
+                    </div>
+                    <div class="slide">
+                        <i class="fas fa-bug"></i>
+                        <h3>致新晋工程师Aydin</h3>
+                        <p>愿Aydin的bug在测试环境被捕获</p>
+                        <p>生产环境永远平稳运行</p>
+                        <p>Code Review永远通过</p>
+                    </div>
+                    <div class="slide">
+                        <i class="fas fa-rocket"></i>
+                        <h3>未来可期，Aydin</h3>
+                        <p>18岁，Aydin人生新的分支</p>
+                        <p>愿Aydin写出优雅的代码</p>
+                        <p>创造有价值的软件</p>
+                    </div>
+                    <div class="slide">
+                        <i class="fas fa-heart"></i>
+                        <h3>生日快乐，Aydin！</h3>
+                        <p>从今天起</p>
+                        <p>Aydin不再是青少年版的程序员</p>
+                        <p>而是正式版啦！🎉</p>
+                    </div>
+                </div>
             </div>
         </div>
-        
+
+        <div class="footer-content">
+            <!-- 生日祝福 -->
+            <div class="birthday-wish">
+                <h3>💡 Aydin的生日愿望清单</h3>
+                <ul>
+                    <li>愿Aydin的代码没有内存泄漏</li>
+                    <li>愿Aydin的生活没有死锁</li>
+                    <li>愿Aydin的爱情像递归一样无限</li>
+                    <li>愿Aydin的财富像堆栈一样增长</li>
+                    <li>愿Aydin的健康像单例模式一样唯一且持久</li>
+                    <li>愿Aydin的快乐像无限循环一样持续</li>
+                </ul>
+            </div>
+
+           
+
         <footer>
-            <p>GitHub仓库文件浏览器 &copy; 2025 From Aydin</p>
+            <p>Designed with <span class="heart">❤</span> for <strong>Aydin</strong></p>
+            <p>愿Aydin的代码永远没有bug，愿Aydin的生活充满惊喜！</p>
         </footer>
     </div>
 
-    <!-- 大图预览模态框 -->
-    <div id="image-modal" class="modal">
-        <button class="modal-close">&times;</button>
-        <button class="modal-nav modal-prev"><i class="fas fa-chevron-left"></i></button>
-        <button class="modal-nav modal-next"><i class="fas fa-chevron-right"></i></button>
-        <img class="modal-content" id="modal-image">
-        <div class="modal-caption" id="modal-caption"></div>
-    </div>
-
     <script>
+        // 全自动放映系统
         document.addEventListener('DOMContentLoaded', function() {
-            const loadBtn = document.getElementById('load-btn');
-            const repoInput = document.getElementById('repo-input');
-            const contentArea = document.getElementById('content-area');
-            const imageModal = document.getElementById('image-modal');
-            const modalImage = document.getElementById('modal-image');
-            const modalCaption = document.getElementById('modal-caption');
-            const modalClose = document.querySelector('.modal-close');
-            const modalPrev = document.querySelector('.modal-prev');
-            const modalNext = document.querySelector('.modal-next');
-            
-            let currentImages = [];
-            let currentImageIndex = 0;
-            let currentView = 'grid';
-            let currentPath = '';
-            let currentUsername = '';
-            let currentRepo = '';
-            
-            // 页面加载时自动加载示例仓库
-            setTimeout(() => {
-                loadRepoContents('tensorflow', 'tensorflow', '');
-            }, 1000);
-            
-            loadBtn.addEventListener('click', function() {
-                const repoUrl = repoInput.value.trim();
-                if (!repoUrl) {
-                    showError('请输入GitHub仓库URL');
-                    return;
+            // 显示通知
+            function showNotification(message) {
+                const notification = document.getElementById('notification');
+                const notificationText = document.getElementById('notificationText');
+                notificationText.textContent = message;
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+
+            // 背景代码动画
+            function createBackgroundAnimation() {
+                const bgContainer = document.getElementById('bgAnimation');
+                const codeSnippets = [
+                    'function aydinBirthday() { return "快乐"; }',
+                    'const aydin = { age: 18, skills: ["coding", "debug"] };',
+                    'while(aydin.alive) { aydin.eat(); aydin.code(); aydin.sleep(); }',
+                    'if (aydin.happy) { aydin.celebrate(); }',
+                    'console.log("生日快乐，Aydin!");',
+                    'try { aydin.beAwesome(); } catch(e) { aydin.party(); }',
+                    'for(let i=0; i<18; i++) { aydin.grow(); }',
+                    'document.querySelector("#aydinLife").value = "adult";',
+                    'new Aydin().init();',
+                    'return true; // Aydin启动成功'
+                ];
+                
+                // 创建多个浮动代码行
+                for(let i = 0; i < 15; i++) {
+                    setTimeout(() => {
+                        const line = document.createElement('div');
+                        line.className = 'code-line';
+                        line.textContent = codeSnippets[Math.floor(Math.random() * codeSnippets.length)];
+                        line.style.left = Math.random() * 100 + '%';
+                        line.style.animationDuration = (15 + Math.random() * 15) + 's';
+                        line.style.animationDelay = Math.random() * 5 + 's';
+                        line.style.color = ['#4CAF50', '#007acc', '#dcdcaa', '#9cdcfe', '#ce9178'][Math.floor(Math.random() * 5)];
+                        bgContainer.appendChild(line);
+                        
+                        // 动画结束后移除
+                        setTimeout(() => {
+                            if(line.parentNode) {
+                                line.parentNode.removeChild(line);
+                            }
+                        }, 20000);
+                    }, i * 1000);
                 }
-                
-                const match = repoUrl.match(/github\.com\/([^\/]+)\/([^\/]+)/);
-                if (!match) {
-                    showError('无效的GitHub仓库URL');
-                    return;
-                }
-                
-                const username = match[1];
-                const repo = match[2].replace(/\.git$/, '');
-                
-                loadRepoContents(username, repo, '');
-            });
+            }
+
+            // 幻灯片自动切换
+            let currentSlide = 0;
+            const slides = document.querySelectorAll('.slide');
+            const dots = document.querySelectorAll('.dot');
             
-            function loadRepoContents(username, repo, path) {
-                contentArea.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i><p>加载中...</p></div>';
+            function showSlide(index) {
+                slides.forEach(slide => slide.classList.remove('active'));
+                dots.forEach(dot => dot.classList.remove('active'));
                 
-                currentUsername = username;
-                currentRepo = repo;
-                currentPath = path;
-                
-                const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/${path}`;
-                
-                fetch(apiUrl)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('无法访问仓库，可能是私有仓库或不存在');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (Array.isArray(data)) {
-                            displayFileList(data, username, repo, path);
-                        } else if (data.type === 'file') {
-                            displayFileContent(data, username, repo, path);
-                        }
-                    })
-                    .catch(error => {
-                        showError(error.message);
-                    });
+                slides[index].classList.add('active');
+                dots[index].classList.add('active');
             }
             
-            function displayFileList(files, username, repo, path) {
-                const directories = files.filter(item => item.type === 'dir');
-                const fileItems = files.filter(item => item.type === 'file');
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % slides.length;
+                showSlide(currentSlide);
+            }
+
+            // 进度条和计时器
+            let startTime = Date.now();
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const countdown = document.getElementById('countdown');
+            
+            function updateProgress() {
+                const elapsed = Date.now() - startTime;
+                const maxTime = 60000; // 60秒完成庆祝
                 
-                const imageFiles = fileItems.filter(item => isImageFile(item.name));
-                currentImages = imageFiles.map((image, index) => ({
-                    ...image,
-                    index: index,
-                    downloadUrl: `https://raw.githubusercontent.com/${username}/${repo}/main/${image.path}`
-                }));
+                let percentage = Math.min(100, (elapsed / maxTime) * 100);
+                progressBar.style.width = percentage + '%';
+                progressText.textContent = `Aydin的庆祝进度: ${Math.floor(percentage)}%`;
                 
-                let html = '';
+                // 更新计时器
+                const seconds = Math.floor(elapsed / 1000);
+                const minutes = Math.floor(seconds / 60);
+                const hrs = Math.floor(minutes / 60);
+                const displaySeconds = seconds % 60;
+                const displayMinutes = minutes % 60;
                 
-                if (path) {
-                    const pathParts = path.split('/').filter(Boolean);
-                    html += '<div class="breadcrumb">';
-                    html += `<a href="javascript:void(0)" data-path=""><i class="fas fa-home"></i> ${username}/${repo}</a>`;
-                    html += `<span class="separator">/</span>`;
-                    
-                    let currentPath = '';
-                    for (let i = 0; i < pathParts.length; i++) {
-                        currentPath += pathParts[i] + '/';
-                        html += `<a href="javascript:void(0)" data-path="${currentPath}">${pathParts[i]}</a>`;
-                        if (i < pathParts.length - 1) {
-                            html += `<span class="separator">/</span>`;
-                        }
-                    }
-                    
-                    html += '</div>';
+                countdown.textContent = 
+                    `${hrs.toString().padStart(2, '0')}:${displayMinutes.toString().padStart(2, '0')}:${displaySeconds.toString().padStart(2, '0')}`;
+                
+                if(percentage < 100) {
+                    requestAnimationFrame(updateProgress);
                 } else {
-                    html += `<div class="breadcrumb"><a href="javascript:void(0)" data-path=""><i class="fas fa-home"></i> ${username}/${repo}</a></div>`;
+                    showNotification("🎉 Aydin的庆祝完成！Aydin是最棒的程序员！");
+                    createConfetti(30); // 完成时释放更多彩纸
                 }
+            }
+
+            // 彩纸效果
+            function createConfetti(count = 15) {
+                const colors = ['#4CAF50', '#007acc', '#f44336', '#ffbd2e', '#27c93f', '#9cdcfe', '#ce9178'];
                 
-                html += `
-                    <div class="view-options">
-                        <div class="view-option ${currentView === 'grid' ? 'active' : ''}" data-view="grid"><i class="fas fa-th"></i> 网格视图</div>
-                        <div class="view-option ${currentView === 'list' ? 'active' : ''}" data-view="list"><i class="fas fa-list"></i> 列表视图</div>
-                    </div>
+                for(let i = 0; i < count; i++) {
+                    setTimeout(() => {
+                        const confetti = document.createElement('div');
+                        confetti.className = 'confetti';
+                        confetti.style.left = Math.random() * 100 + '%';
+                        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                        confetti.style.animationDuration = (3 + Math.random() * 4) + 's';
+                        confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                        document.body.appendChild(confetti);
+                        
+                        // 动画结束后移除
+                        setTimeout(() => {
+                            if(confetti.parentNode) {
+                                confetti.parentNode.removeChild(confetti);
+                            }
+                        }, 7000);
+                    }, i * 100);
+                }
+            }
+
+            // 生成Aydin的专属代码
+            function generateAydinCode() {
+                const adjectives = ['优雅的', '高效的', '简洁的', '强大的', '创新的'];
+                const nouns = ['算法', '系统', '应用', '解决方案', '架构'];
+                const verbs = ['构建', '优化', '重构', '设计', '实现'];
+                
+                const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
+                const noun = nouns[Math.floor(Math.random() * nouns.length)];
+                const verb = verbs[Math.floor(Math.random() * verbs.length)];
+                
+                const code = `
+// Aydin的专属生日代码
+class Aydin {
+  constructor(name, age) {
+    this.name = "${adj}工程师Aydin";
+    this.age = ${18 + Math.floor(Math.random() * 10)};
+    this.skills = ["${noun}", "${verb}", "debug"];
+    this.happiness = 100;
+    this.codingPower = 9999;
+  }
+  
+  celebrateBirthday() {
+    return \`生日快乐，Aydin！愿你${adj}${noun}永远${verb}成功！\`;
+  }
+  
+  compileLife() {
+    return "Aydin的成年生活编译成功，无错误！";
+  }
+}
+
+const aydin = new Aydin("Aydin", 18);
+console.log(aydin.celebrateBirthday());
+console.log(aydin.compileLife());
                 `;
                 
-                if (currentView === 'grid') {
-                    html += '<div class="file-grid">';
-                    
-                    if (path) {
-                        const parentPath = path.split('/').slice(0, -1).join('/');
-                        html += `
-                            <div class="file-item" data-path="${parentPath}" data-type="dir">
-                                <div class="file-thumbnail">
-                                    <i class="fas fa-level-up-alt file-icon"></i>
-                                </div>
-                                <div class="file-name">返回上级目录</div>
-                            </div>
-                        `;
-                    }
-                    
-                    directories.forEach(item => {
-                        html += `
-                            <div class="file-item" data-path="${item.path}" data-type="${item.type}">
-                                <div class="file-thumbnail">
-                                    <i class="fas fa-folder file-icon" style="color: #ffd33d;"></i>
-                                </div>
-                                <div class="file-name">${item.name}</div>
-                                <div class="file-size">文件夹</div>
-                            </div>
-                        `;
-                    });
-                    
-                    fileItems.forEach(item => {
-                        const isImage = isImageFile(item.name);
-                        const rawUrl = `https://raw.githubusercontent.com/${username}/${repo}/main/${item.path}`;
-                        
-                        html += `
-                            <div class="file-item" data-path="${item.path}" data-type="${item.type}" data-url="${item.html_url}">
-                                <div class="file-thumbnail">
-                                    ${isImage ? 
-                                        `<img src="${rawUrl}" alt="${item.name}" loading="lazy" onclick="event.stopPropagation(); previewImageFromPath('${item.path}')">` : 
-                                        `<i class="fas fa-file file-icon" style="color: #79b8ff;"></i>`
-                                    }
-                                </div>
-                                <div class="file-name">${item.name}</div>
-                                <div class="file-size">${formatFileSize(item.size)}</div>
-                                <div class="file-actions">
-                                    <div class="file-action" title="下载" onclick="event.stopPropagation(); downloadFile('${item.name}', '${rawUrl}')">
-                                        <i class="fas fa-download"></i>
-                                    </div>
-                                    ${isImage ? `
-                                    <div class="file-action" title="查看大图" onclick="event.stopPropagation(); previewImageFromPath('${item.path}')">
-                                        <i class="fas fa-expand"></i>
-                                    </div>
-                                    ` : ''}
-                                </div>
-                            </div>
-                        `;
-                    });
-                    
-                    html += '</div>';
-                } else {
-                    html += `
-                        <table class="file-list-view">
-                            <thead>
-                                <tr>
-                                    <th>名称</th>
-                                    <th>大小</th>
-                                    <th>类型</th>
-                                    <th>操作</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                    `;
-                    
-                    if (path) {
-                        const parentPath = path.split('/').slice(0, -1).join('/');
-                        html += `
-                            <tr class="file-item" data-path="${parentPath}" data-type="dir">
-                                <td>
-                                    <div class="file-list-name">
-                                        <i class="fas fa-level-up-alt"></i>
-                                        <span>返回上级目录</span>
-                                    </div>
-                                </td>
-                                <td>-</td>
-                                <td>文件夹</td>
-                                <td></td>
-                            </tr>
-                        `;
-                    }
-                    
-                    directories.forEach(item => {
-                        html += `
-                            <tr class="file-item" data-path="${item.path}" data-type="${item.type}">
-                                <td>
-                                    <div class="file-list-name">
-                                        <i class="fas fa-folder" style="color: #ffd33d;"></i>
-                                        <span>${item.name}</span>
-                                    </div>
-                                </td>
-                                <td>-</td>
-                                <td>文件夹</td>
-                                <td></td>
-                            </tr>
-                        `;
-                    });
-                    
-                    fileItems.forEach(item => {
-                        const isImage = isImageFile(item.name);
-                        const fileType = isImage ? '图片' : getFileType(item.name);
-                        const rawUrl = `https://raw.githubusercontent.com/${username}/${repo}/main/${item.path}`;
-                        
-                        html += `
-                            <tr class="file-item" data-path="${item.path}" data-type="${item.type}" data-url="${item.html_url}">
-                                <td>
-                                    <div class="file-list-name">
-                                        ${isImage ? 
-                                            `<img src="${rawUrl}" alt="${item.name}" class="list-thumbnail" onclick="event.stopPropagation(); previewImageFromPath('${item.path}')">` : 
-                                            `<i class="fas ${isImage ? 'fa-file-image' : 'fa-file'}" style="color: ${isImage ? '#c652f9' : '#79b8ff'}"></i>`
-                                        }
-                                        <span>${item.name}</span>
-                                    </div>
-                                </td>
-                                <td>${formatFileSize(item.size)}</td>
-                                <td>${fileType}</td>
-                                <td>
-                                    <div class="file-list-actions">
-                                        <div class="file-list-action" onclick="event.stopPropagation(); downloadFile('${item.name}', '${rawUrl}')">
-                                            <i class="fas fa-download"></i> 下载
-                                        </div>
-                                        ${isImage ? `
-                                        <div class="file-list-action" onclick="event.stopPropagation(); previewImageFromPath('${item.path}')">
-                                            <i class="fas fa-expand"></i> 查看大图
-                                        </div>
-                                        ` : ''}
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                    
-                    html += `
-                            </tbody>
-                        </table>
-                    `;
-                }
+                // 创建通知
+                showNotification("🎉 已生成Aydin专属生日代码！");
                 
-                contentArea.innerHTML = html;
+                // 创建模态框显示代码
+                const modal = document.createElement('div');
+                modal.className = 'modal show';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <span class="close-modal">&times;</span>
+                        <h2>Aydin的专属代码</h2>
+                        <pre style="text-align: left; background: #1a1a1a; padding: 15px; border-radius: 4px; overflow: auto; max-height: 300px;">${code}</pre>
+                        <p>复制并保存这份给Aydin的生日代码！</p>
+                        <button class="btn" onclick="this.parentElement.parentElement.remove()">关闭</button>
+                    </div>
+                `;
+                document.body.appendChild(modal);
                 
-                contentArea.querySelectorAll('.file-item').forEach(item => {
-                    item.addEventListener('click', function() {
-                        const itemPath = this.getAttribute('data-path');
-                        const itemType = this.getAttribute('data-type');
-                        
-                        if (itemType === 'dir') {
-                            loadRepoContents(username, repo, itemPath);
-                        } else if (!isImageFile(itemPath)) {
-                            fetch(`https://api.github.com/repos/${username}/${repo}/contents/${itemPath}`)
-                                .then(response => response.json())
-                                .then(fileData => {
-                                    displayFileContent(fileData, username, repo, itemPath);
-                                })
-                                .catch(error => {
-                                    showError('无法加载文件内容: ' + error.message);
-                                });
-                        }
-                    });
+                // 关闭事件
+                modal.querySelector('.close-modal').addEventListener('click', () => {
+                    modal.remove();
                 });
                 
-                contentArea.querySelectorAll('.view-option').forEach(option => {
-                    option.addEventListener('click', function() {
-                        currentView = this.getAttribute('data-view');
-                        displayFileList(files, username, repo, path);
-                    });
-                });
-                
-                contentArea.querySelectorAll('.breadcrumb a[data-path]').forEach(link => {
-                    link.addEventListener('click', function() {
-                        loadRepoContents(username, repo, this.getAttribute('data-path'));
-                    });
+                modal.addEventListener('click', (e) => {
+                    if(e.target === modal) modal.remove();
                 });
             }
-            
-            function displayFileContent(fileData, username, repo, path) {
-                const content = atob(fileData.content.replace(/\s/g, ''));
-                
-                const pathParts = path.split('/').filter(Boolean);
-                let breadcrumbHtml = '<div class="breadcrumb">';
-                breadcrumbHtml += `<a href="javascript:void(0)" data-path=""><i class="fas fa-home"></i> ${username}/${repo}</a>`;
-                breadcrumbHtml += `<span class="separator">/</span>`;
-                
-                let currentPath = '';
-                for (let i = 0; i < pathParts.length - 1; i++) {
-                    currentPath += pathParts[i] + '/';
-                    breadcrumbHtml += `<a href="javascript:void(0)" data-path="${currentPath}">${pathParts[i]}</a>`;
-                    breadcrumbHtml += `<span class="separator">/</span>`;
-                }
-                
-                breadcrumbHtml += `${pathParts[pathParts.length - 1]}</div>`;
-                
-                const parentPath = path.split('/').slice(0, -1).join('/');
-                const backButton = `<a href="javascript:void(0)" class="back-button" data-path="${parentPath}"><i class="fas fa-arrow-left"></i> 返回</a>`;
-                
-                const downloadButton = `<button onclick="downloadFile('${pathParts[pathParts.length - 1]}', 'https://raw.githubusercontent.com/${username}/${repo}/main/${path}')"><i class="fas fa-download"></i> 下载文件</button>`;
-                
-                let fileContent = '';
-                if (isImageFile(path)) {
-                    const imageUrl = `https://raw.githubusercontent.com/${username}/${repo}/main/${path}`;
-                    fileContent = `
-                        <div class="image-preview">
-                            <img src="${imageUrl}" alt="${path}">
-                        </div>
-                    `;
-                } else if (isTextFile(path)) {
-                    fileContent = `
-                        <div class="file-content">
-                            <h3>${pathParts[pathParts.length - 1]}</h3>
-                            <div class="code-content">${escapeHtml(content)}</div>
-                        </div>
-                    `;
-                } else {
-                    fileContent = `
-                        <div class="file-content">
-                            <h3>${pathParts[pathParts.length - 1]}</h3>
-                            <p>这是一个二进制文件，无法直接预览。您可以下载该文件查看。</p>
-                        </div>
-                    `;
-                }
-                
-                contentArea.innerHTML = backButton + breadcrumbHtml + downloadButton + fileContent;
-                
-                contentArea.querySelector('.back-button').addEventListener('click', function() {
-                    loadRepoContents(username, repo, this.getAttribute('data-path'));
-                });
-                
-                contentArea.querySelectorAll('.breadcrumb a[data-path]').forEach(link => {
-                    link.addEventListener('click', function() {
-                        loadRepoContents(username, repo, this.getAttribute('data-path'));
-                    });
-                });
-            }
-            
-            function previewImageFromPath(imagePath) {
-                const imageIndex = currentImages.findIndex(img => img.path === imagePath);
-                if (imageIndex !== -1) {
-                    previewImage(imageIndex);
-                } else {
-                    const imageUrl = `https://raw.githubusercontent.com/${currentUsername}/${currentRepo}/main/${imagePath}`;
-                    modalImage.src = imageUrl;
-                    modalCaption.textContent = imagePath;
-                    imageModal.style.display = 'block';
-                    document.body.style.overflow = 'hidden';
+
+            // 粒子效果
+            function createParticles() {
+                for(let i = 0; i < 20; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * window.innerWidth + 'px';
+                    particle.style.top = Math.random() * window.innerHeight + 'px';
+                    particle.style.backgroundColor = ['#4CAF50', '#007acc', '#ffbd2e'][Math.floor(Math.random() * 3)];
+                    
+                    document.body.appendChild(particle);
+                    
+                    // 动画
+                    setTimeout(() => {
+                        particle.style.opacity = '1';
+                        particle.style.transform = `translate(${(Math.random() - 0.5) * 200}px, ${(Math.random() - 0.5) * 200}px) scale(${Math.random() * 2})`;
+                        particle.style.transition = 'all 2s ease';
+                    }, 10);
+                    
+                    setTimeout(() => {
+                        if(particle.parentNode) particle.remove();
+                    }, 2000);
                 }
             }
+
+            // 模态框处理
+            const modal = document.getElementById('birthdayModal');
+            const startBtn = document.getElementById('startCelebration');
+            const closeModal = document.getElementById('closeModal');
             
-            function previewImage(index) {
-                currentImageIndex = index;
-                const image = currentImages[index];
+            // 页面加载后显示模态框
+            setTimeout(() => {
+                modal.classList.add('show');
+                showNotification("🎉 欢迎Aydin来到成年世界！");
+            }, 1000);
+            
+            startBtn.addEventListener('click', () => {
+                modal.classList.remove('show');
+                showNotification("🎊 Aydin的庆祝程序启动！");
                 
-                modalImage.src = image.downloadUrl;
-                modalCaption.textContent = `${image.name} (${formatFileSize(image.size)})`;
+                // 开始所有自动化流程
+                createBackgroundAnimation();
+                setInterval(nextSlide, 5000); // 每5秒切换幻灯片
+                updateProgress(); // 开始进度条
+                createParticles(); // 创建粒子效果
                 
-                imageModal.style.display = 'block';
-                document.body.style.overflow = 'hidden';
-            }
-            
-            function closeModal() {
-                imageModal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            }
-            
-            function navigateImage(direction) {
-                currentImageIndex += direction;
-                
-                if (currentImageIndex < 0) {
-                    currentImageIndex = currentImages.length - 1;
-                } else if (currentImageIndex >= currentImages.length) {
-                    currentImageIndex = 0;
-                }
-                
-                const image = currentImages[currentImageIndex];
-                modalImage.src = image.downloadUrl;
-                modalCaption.textContent = `${image.name} (${formatFileSize(image.size)})`;
-            }
-            
-            function downloadFile(filename, url) {
-                const a = document.createElement('a');
-                a.style.display = 'none';
-                a.href = url;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-            }
-            
-            function isImageFile(filename) {
-                return /\.(jpg|jpeg|png|gif|bmp|svg|webp|ico)$/i.test(filename);
-            }
-            
-            function isTextFile(filename) {
-                return /\.(txt|md|html|css|js|json|xml|yml|yaml|py|java|c|cpp|cs|php|rb|go|rs|ts|sh|bat|cmd|ps1)$/i.test(filename);
-            }
-            
-            function getFileType(filename) {
-                if (isImageFile(filename)) return '图片';
-                if (isTextFile(filename)) return '文本';
-                if (/\.(zip|rar|7z|tar|gz)$/i.test(filename)) return '压缩文件';
-                if (/\.(pdf)$/i.test(filename)) return 'PDF文档';
-                if (/\.(doc|docx)$/i.test(filename)) return 'Word文档';
-                if (/\.(xls|xlsx)$/i.test(filename)) return 'Excel文档';
-                if (/\.(ppt|pptx)$/i.test(filename)) return 'PowerPoint文档';
-                if (/\.(mp4|avi|mov|wmv|flv|mkv)$/i.test(filename)) return '视频';
-                if (/\.(mp3|wav|flac|aac)$/i.test(filename)) return '音频';
-                return '文件';
-            }
-            
-            function showError(message) {
-                contentArea.innerHTML = `<div class="error"><i class="fas fa-exclamation-circle"></i> 错误: ${message}</div>`;
-            }
-            
-            function formatFileSize(bytes) {
-                if (!bytes || bytes === 0) return '0 B';
-                const k = 1024;
-                const sizes = ['B', 'KB', 'MB', 'GB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-            }
-            
-            function escapeHtml(unsafe) {
-                return unsafe
-                    .replace(/&/g, "&amp;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;")
-                    .replace(/"/g, "&quot;")
-                    .replace(/'/g, "&#039;");
-            }
-            
-            // 模态框事件
-            modalClose.addEventListener('click', closeModal);
-            modalPrev.addEventListener('click', () => navigateImage(-1));
-            modalNext.addEventListener('click', () => navigateImage(1));
-            
-            // 点击模态框背景关闭
-            imageModal.addEventListener('click', function(e) {
-                if (e.target === imageModal) {
-                    closeModal();
-                }
+                // 定期创建彩纸
+                setInterval(() => {
+                    if(Math.random() > 0.7) createConfetti(5);
+                }, 3000);
             });
             
-            // 键盘导航
-            document.addEventListener('keydown', function(e) {
-                if (imageModal.style.display === 'block') {
-                    if (e.key === 'Escape') {
-                        closeModal();
-                    } else if (e.key === 'ArrowLeft') {
-                        navigateImage(-1);
-                    } else if (e.key === 'ArrowRight') {
-                        navigateImage(1);
-                    }
+            closeModal.addEventListener('click', () => {
+                modal.classList.remove('show');
+            });
+            
+            // 交互按钮
+            document.getElementById('generateCode').addEventListener('click', () => {
+                generateAydinCode();
+                createParticles();
+            });
+            
+            document.getElementById('confettiBtn').addEventListener('click', () => {
+                createConfetti(20);
+                showNotification("🎊 为Aydin释放的彩纸！");
+            });
+            
+            // 点击页面其他地方也关闭模态框
+            modal.addEventListener('click', (e) => {
+                if(e.target === modal) {
+                    modal.classList.remove('show');
                 }
             });
-            
-            // 触摸滑动支持（移动设备）
-            let touchStartX = 0;
-            modalImage.addEventListener('touchstart', function(e) {
-                touchStartX = e.touches[0].clientX;
-            });
-            
-            modalImage.addEventListener('touchend', function(e) {
-                const touchEndX = e.changedTouches[0].clientX;
-                const diffX = touchEndX - touchStartX;
-                
-                if (Math.abs(diffX) > 50) {
-                    if (diffX > 0) {
-                        navigateImage(-1);
-                    } else {
-                        navigateImage(1);
-                    }
-                }
-            });
-            
-            // 全局函数
-            window.previewImage = previewImage;
-            window.previewImageFromPath = previewImageFromPath;
-            window.downloadFile = downloadFile;
+
+            // 页面加载后显示通知
+            setTimeout(() => {
+                showNotification("系统初始化完成 - 点击'开始庆祝'启动Aydin的全自动程序");
+            }, 2000);
         });
     </script>
 </body>
